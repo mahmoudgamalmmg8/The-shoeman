@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE SHOEMAN - Keeper of Soles</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #f0f0f0;
+      font-family: 'Courier New', Courier, monospace;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 2px solid red;
+      position: relative;
+    }
+    header h1 {
+      color: white;
+      font-size: 3rem;
+      margin: 0;
+    }
+    header h2 {
+      color: #aaa;
+      font-weight: 300;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+    .cart-icon {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 1.8rem;
+      color: red;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .cart-icon::after {
+      content: attr(data-count);
+      position: absolute;
+      top: -8px;
+      right: -12px;
+      background: white;
+      color: red;
+      font-size: 0.75rem;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 20px;
+      font-weight: bold;
+    }
+    nav {
+      background-color: #111;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #222;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: red;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    nav a:hover {
+      color: white;
+    }
+    .tab-content {
+      display: block;
+      padding: 2rem;
+    }
+    #product-list {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 2rem;
+      justify-items: center;
+    }
+    .product {
+      background-color: #1c1c1c;
+      border-radius: 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.3s, background-color 0.3s;
+      width: 220px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+    }
+    .product:hover {
+      transform: scale(1.03);
+      background-color: #2a2a2a;
+    }
+    .product img {
+      width: 100%;
+      height: 180px;
+      object-fit: cover;
+      border-radius: 4px;
+      border: 2px solid red;
+    }
+    .product-info {
+      background-color: #2a2a2a;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      flex-grow: 1;
+    }
+    .product-info h3 {
+      margin: 0;
+      font-size: 1.3rem;
+      color: red;
+    }
+    .product-info p {
+      margin: 0.25rem 0;
+    }
+    .add-button {
+      margin-top: auto;
+      background-color: red;
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      font-size: 1rem;
+      width: 100%;
+      border-radius: 6px;
+    }
+    footer {
+      text-align: center;
+      padding: 1rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+    
+    /* Modal styles */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 100;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      overflow: auto;
+      background-color: rgba(0,0,0,0.9);
+    }
+    .modal-content {
+      background-color: #1a1a1a;
+      margin: 5% auto;
+      padding: 2rem;
+      border: 2px solid red;
+      width: 80%;
+      max-width: 900px;
+      border-radius: 8px;
+      position: relative;
+    }
+    .close {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      color: #aaa;
+      font-size: 2rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .close:hover {
+      color: red;
+    }
+    .product-detail {
+      display: flex;
+      gap: 2rem;
+    }
+    .product-images {
+      flex: 1;
+    }
+    .product-images img {
+      width: 100%;
+      max-height: 400px;
+      object-fit: contain;
+      border: 1px solid #444;
+      border-radius: 4px;
+    }
+    .product-info-detail {
+      flex: 1;
+      text-align: left;
+    }
+    .product-info-detail h2 {
+      color: red;
+      margin-top: 0;
+      font-size: 2rem;
+    }
+    .product-info-detail .price {
+      font-size: 1.5rem;
+      color: white;
+      margin: 1rem 0;
+    }
+    .product-info-detail .description {
+      margin: 1.5rem 0;
+      line-height: 1.6;
+    }
+    .action-buttons {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .action-buttons button {
+      padding: 0.8rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .add-to-cart {
+      background-color: red;
+      color: white;
+      flex: 2;
+    }
+    .add-to-cart:hover {
+      background-color: #d90000;
+    }
+    .buy-now {
+      background-color: #333;
+      color: white;
+      flex: 1;
+    }
+    .buy-now:hover {
+      background-color: #444;
+    }
+    
+    /* Page sections */
+    .page-section {
+      display: none;
+      padding: 2rem;
+    }
+    .page-section.active {
+      display: block;
+    }
+    
+    .about-content, .contact-content {
+      max-width: 800px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+    
+    .about-content h2, .contact-content h2 {
+      color: red;
+      border-bottom: 1px solid #333;
+      padding-bottom: 0.5rem;
+    }
+    
+    @media (max-width: 1200px) {
+      #product-list {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    @media (max-width: 992px) {
+      #product-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      .product-detail {
+        flex-direction: column;
+      }
+    }
+    @media (max-width: 768px) {
+      #product-list {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .modal-content {
+        width: 95%;
+        margin: 2% auto;
+        padding: 1rem;
+      }
+    }
+    @media (max-width: 480px) {
+      #product-list {
+        grid-template-columns: repeat(1, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>THE SHOEMAN</h1>
+    <h2>"KEEPER OF SOLES ~"</h2>
+    <a href="checkout.html" class="cart-icon" id="cart-icon" data-count="0">🛒</a>
+  </header>
+  <nav>
+    <a href="#" class="nav-link" data-section="catalog">Catalog</a>
+    <a href="#" class="nav-link" data-section="about">About</a>
+    <a href="#" class="nav-link" data-section="contact">Contact</a>
+  </nav>
+  
+  <!-- Catalog Section -->
+  <div class="page-section active" id="catalog-section">
+    <div class="tab-content">
+      <div id="product-list"></div>
+    </div>
+  </div>
+  
+  <!-- About Section -->
+  <div class="page-section" id="about-section">
+    <div class="about-content">
+      <h2>About THE SHOEMAN</h2>
+      <p>Since 1888, THE SHOEMAN has been the premier purveyor of extraordinary footwear for discerning clients with... unusual tastes. Our collection consists of rare and haunted shoes, each with its own unique history and supernatural properties.</p>
+      <p>Every pair in our inventory has been carefully authenticated by our team of paranormal investigators and cobblers. We guarantee that each shoe comes with at least one verified supernatural attribute or your money back.</p>
+      <p>Our founder, Elias Shoeman, began this business after discovering a pair of boots that allowed him to walk through walls. Since then, we've specialized in sourcing the most remarkable footwear from around the world.</p>
+    </div>
+  </div>
+  
+  <!-- Contact Section -->
+  <div class="page-section" id="contact-section">
+    <div class="contact-content">
+      <h2>Contact Us</h2>
+      <p>For inquiries about our haunted footwear collection, please reach out through one of these channels:</p>
+      <p><strong>Email:</strong> contact@theshoeman.com</p>
+      <p><strong>Phone:</strong> +1 (666) 666-0666</p>
+      <p><strong>Address:</strong> 1313 Mockingbird Lane, Transylvania</p>
+      <p><strong>Business Hours:</strong> Midnight to 3am, Monday through Friday</p>
+      <p>Note: Our physical location can only be found by those who truly need it. If you can't find us, you're not meant to.</p>
+    </div>
+  </div>
+  
+  <!-- Product Detail Modal -->
+  <div id="productModal" class="modal">
+    <div class="modal-content">
+      <span class="close">&times;</span>
+      <div class="product-detail" id="modalProductContent">
+        <!-- Content will be inserted here by JavaScript -->
+      </div>
+    </div>
+  </div>
+  
+  <footer>
+  </footer>
+
+  <script>
+    const container = document.getElementById("product-list");
+    const cartIcon = document.getElementById("cart-icon");
+    const modal = document.getElementById("productModal");
+    const modalContent = document.getElementById("modalProductContent");
+    const closeBtn = document.querySelector(".close");
+    const navLinks = document.querySelectorAll(".nav-link");
+    const pageSections = document.querySelectorAll(".page-section");
+    
+    let currentProduct = null;
+
+    // Products data - now with single size per shoe
+    const products = [
+      { 
+        id: 1,
+        name: "Bethel's Mary Janes", 
+        size: 6.5, 
+        price: 875.75, 
+        img: "0x1900-000000-80-0-0.jpg",
+        description: "Bethel's final steps echo in these cursed Mary Janes. Wear them and hear the screams of her victims. Perfect for midnight strolls through graveyards.",
+        details: "• Genuine leather soaked in tears\n• Brass buckle that burns flesh\n• Leaves bloody footprints\n• Whispers death threats at dawn"
+      },
+      { 
+        id: 2,
+        name: "The Widow's Heels", 
+        size: 8, 
+        price: 999.99, 
+        img: "1_9a9252cf873d74600974d4b59fa9813c.jpg",
+        description: "Dance with death in these widow's heels. They never wear out because they're fueled by the souls of her murdered husbands.",
+        details: "• Patent leather stained with vengeance\n• 3.5 inch heel that pierces hearts\n• Comes with a poisoned hairpin\n• Size adjusts by consuming flesh"
+      },
+      { 
+        id: 3,
+        name: "Child's Slippers", 
+        size: 4, 
+        price: 666.66, 
+        img: "1_9a9252cf873d74600974d4b59fa9813c.jpg",
+        description: "Innocent slippers with a dark secret. They appear at your bedside, waiting to drag you into the shadows where children never grow up.",
+        details: "• Velvet soaked in lost innocence\n• Silver bell that rings for death\n• Soles that never touch ground\n• Comes with a broken doll's head"
+      },
+      { 
+        id: 4,
+        name: "Shiloh Hill", 
+        size: 10.5, 
+        price: 1200.00, 
+        img: "hq720.jpg",
+        description: "These boots know where bodies are buried. They'll guide you to fresh graves and make sure you join them.",
+        details: "• Leather tanned with human skin\n• Steel shank that breaks necks\n• Laces that strangle enemies\n• Soles that track blood"
+      },
+      { 
+        id: 5,
+        name: "Mira Graves", 
+        size: 7, 
+        price: 730.30, 
+        img: "Bloody Sneakers.jpg",
+        description: "Mira's sneakers are still warm from her last shift. She never clocked out - she just started collecting souls instead of patients.",
+        details: "• White leather stained with screams\n• Glow-in-the-dark soles that lead to morgues\n• Hidden compartment for scalpels\n• Smells like formaldehyde and fear"
+      },
+      { 
+        id: 6,
+        name: "Elsa Thorn", 
+        size: 5.5, 
+        price: 899.99, 
+        img: "P0.jpg",
+        description: "Elsa's final performance ended with a broken neck. These slippers will make you dance until your spine snaps.",
+        details: "• Silk woven with razor wire\n• Ribbons that tighten like nooses\n• Never show sweat - only blood\n• Orchestra plays funeral dirges"
+      },
+      { 
+        id: 7,
+        name: "Victor Hollow", 
+        size: 11, 
+        price: 1066.00, 
+        img: "m_6300e1188634cb8c32c170c3.jpg",
+        description: "Victor polished these shoes with the tears of his victims. The mirror shine reflects your death before it happens.",
+        details: "• Patent leather that never scratches - only cuts\n• Heels that make no sound - only screams\n• Interior lining bleeds when touched\n• Comes with a warm shoehorn made of bone"
+      },
+      { 
+        id: 8,
+        name: "Ophelia Dusk", 
+        size: 6, 
+        price: 844.44, 
+        img: "istockphoto-497864608-612x612.jpg",
+        description: "Found floating in Ophelia's watery grave. These shoes will drown you in their beauty while you sleep.",
+        details: "• Water-resistant satin that never dries\n• Silver lily pads that bloom with blood\n• Soles leave drowning footprints\n• Pocket holds your last breath"
+      },
+      { 
+        id: 9,
+        name: "Lena Ashcroft", 
+        size: 8.5, 
+        price: 977.77, 
+        img: "71NpAjTXPnL._AC_SL1500_.jpg",
+        description: "Lena's riding boots were found standing in a field of corpses. They'll take you on a hunt you won't survive.",
+        details: "• English leather tanned with horsehide and human skin\n• Spurs that jingle with death knells\n• Interior lined with pages of screams\n• Heels that never sink - only crush"
+      },
+      { 
+        id: 10,
+        name: "Isaac Crow", 
+        size: 9, 
+        price: 888.88, 
+        img: "pngtree-dirty-shoes-old-dirty-filthy-png-image_19805792.png",
+        description: "Isaac knew where to dig because he put the bodies there. These boots will bury you alive.",
+        details: "• Heavy duty leather that never wears - only consumes\n• Steel toes that crush skulls\n• Permanent smell of fresh graves\n• Laces tied in hangman's knots"
+      }
+    ];
+
+    function updateCartIcon() {
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cartIcon.setAttribute("data-count", cart.length);
+    }
+
+    function addToCart(e, productId) {
+      e.stopPropagation();
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+      
+      const cart = JSON.parse(localStorage.getItem("cart")) || [];
+      cart.push({ 
+        id: product.id,
+        name: product.name, 
+        size: product.size, 
+        price: product.price,
+        img: product.img
+      });
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartIcon();
+    }
+
+    function buyNow(e, productId) {
+      e.stopPropagation();
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+      
+      // Clear existing cart and add only this product
+      const cart = [{ 
+        id: product.id,
+        name: product.name, 
+        size: product.size, 
+        price: product.price,
+        img: product.img
+      }];
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartIcon();
+      
+      // Redirect to checkout
+      window.location.href = "checkout.html";
+    }
+
+    function openProductModal(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+      
+      currentProduct = product;
+      
+      modalContent.innerHTML = `
+        <div class="product-images">
+          <img src="img/${product.img}" alt="${product.name}">
+        </div>
+        <div class="product-info-detail">
+          <h2>${product.name}</h2>
+          <div class="price">$${product.price.toFixed(2)}</div>
+          <div class="description">
+            <p>${product.description}</p>
+            <p style="white-space: pre-line;">${product.details}</p>
+          </div>
+          <div class="size-info">
+            <p><strong>Size:</strong> ${product.size}</p>
+          </div>
+          <div class="action-buttons">
+            <button class="add-to-cart" onclick="addToCart(event, ${product.id})">Add to Cart</button>
+            <button class="buy-now" onclick="buyNow(event, ${product.id})">Buy Now</button>
+          </div>
+        </div>
+      `;
+      
+      modal.style.display = "block";
+      document.body.style.overflow = "hidden";
+    }
+
+    function closeModal() {
+      modal.style.display = "none";
+      document.body.style.overflow = "auto";
+    }
+
+    // Navigation functionality
+    navLinks.forEach(link => {
+      link.addEventListener("click", function(e) {
+        e.preventDefault();
+        const sectionId = this.getAttribute("data-section") + "-section";
+        
+        // Hide all sections
+        pageSections.forEach(section => {
+          section.classList.remove("active");
+        });
+        
+        // Show selected section
+        document.getElementById(sectionId).classList.add("active");
+      });
+    });
+
+    // Close modal when clicking X or outside
+    closeBtn.onclick = closeModal;
+    window.onclick = function(event) {
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+
+    // Close with ESC key
+    document.addEventListener('keydown', function(event) {
+      if (event.key === "Escape") {
+        closeModal();
+      }
+    });
+
+    // Render products
+    products.forEach((p) => {
+      container.innerHTML += `
+        <div class="product" onclick="openProductModal(${p.id})">
+          <img src="img/${p.img}" alt="${p.name}">
+          <div class="product-info">
+            <h3>${p.name}</h3>
+            <p><strong>Size:</strong> ${p.size}</p>
+            <p><strong>Price:</strong> $${p.price.toFixed(2)}</p>
+            <button class="add-button" onclick="addToCart(event, ${p.id})">Add to Cart</button>
+          </div>
+        </div>
+      `;
+    });
+
+    updateCartIcon();
+  </script>
+</body>
+</html>
