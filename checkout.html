@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Checkout - THE SHOEMAN</title>
+  <style>
+    body {
+      background-color: #0d0d0d;
+      color: #f0f0f0;
+      font-family: 'Courier New', Courier, monospace;
+      padding: 0;
+      margin: 0;
+    }
+    header {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      text-align: center;
+      border-bottom: 2px solid red;
+      position: relative;
+    }
+    header h1 {
+      color: red;
+      font-size: 2.5rem;
+      margin: 0;
+      letter-spacing: 2px;
+    }
+    header h2 {
+      color: #aaa;
+      font-weight: 300;
+      margin-top: 0.5rem;
+      font-style: italic;
+    }
+    .cart-icon {
+      position: absolute;
+      top: 1.5rem;
+      right: 2rem;
+      font-size: 1.5rem;
+      color: red;
+      background: none;
+      padding: 0;
+      text-decoration: none;
+    }
+    nav {
+      background-color: #111;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
+      border-bottom: 1px solid #222;
+      flex-wrap: wrap;
+    }
+    nav a {
+      color: red;
+      margin: 0 1rem;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    h1 {
+      text-align: center;
+      color: red;
+      margin: 2rem 0 1rem;
+    }
+    .cart-items {
+      background-color: #1a1a1a;
+      padding: 1rem;
+      border-radius: 8px;
+      margin: 1rem auto 2rem;
+      border: 1px solid red;
+      max-width: 600px;
+    }
+    .checkout-container {
+      display: flex;
+      gap: 2rem;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 2rem;
+    }
+    .cart-items {
+      background-color: #1a1a1a;
+      padding: 1rem;
+      border-radius: 8px;
+      border: 1px solid red;
+      flex: 1;
+      max-width: none;
+      margin: 0;
+    }
+    .cart-items ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .cart-items li {
+      margin: 0.5rem 0;
+    }
+    form {
+      background-color: #1a1a1a;
+      padding: 2rem;
+      border-radius: 8px;
+      border: 1px solid red;
+      flex: 1;
+      max-width: none;
+      margin: 0;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      background-color: #2a2a2a;
+      color: white;
+      border: 1px solid red;
+      border-radius: 4px;
+    }
+    button {
+      background-color: red;
+      color: white;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 6px;
+      margin-top: 2rem;
+      width: 100%;
+      cursor: pointer;
+    }
+    .success-message {
+      text-align: center;
+      color: lightgreen;
+      margin-top: 2rem;
+    }
+    
+    .cart-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #333;
+    }
+    
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    
+    .item-info {
+      flex: 1;
+    }
+    
+    .item-controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .quantity-btn {
+      background-color: red;
+      color: white;
+      border: none;
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-weight: bold;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      line-height: 1;
+    }
+    
+    .quantity-btn:hover {
+      background-color: #d90000;
+    }
+    
+    .remove-btn {
+      background-color: #333;
+      color: white;
+      border: none;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+    
+    .remove-btn:hover {
+      background-color: #555;
+    }
+    
+    .quantity {
+      font-weight: bold;
+      color: red;
+      min-width: 20px;
+      text-align: center;
+    }
+    
+    footer {
+      text-align: center;
+      padding: 3rem 1rem;
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 3rem;
+    }
+    
+    @media (max-width: 768px) {
+      .checkout-container {
+        flex-direction: column;
+        padding: 0 1rem;
+      }
+      .cart-items, form {
+        margin-bottom: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>THE SHOEMAN</h1>
+    <h2>KEEPER OF SOLES</h2>
+    <a href="checkout.html" class="cart-icon">🛒</a>
+  </header>
+  <nav>
+    <a href="index.html">Catalog</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </nav>
+
+  <h1>Checkout</h1>
+
+  <div class="checkout-container">
+    <div class="cart-items">
+      <h2>Your Items</h2>
+      <ul id="item-list"></ul>
+      <p><strong>Total:</strong> $<span id="total"></span></p>
+    </div>
+
+    <form id="checkout-form">
+      <label for="first-name">First Name</label>
+      <input type="text" id="first-name" required>
+
+      <label for="address">Address</label>
+      <textarea id="address" rows="2" required></textarea>
+
+      <label for="birthday">Birthday</label>
+      <input type="date" id="birthday" required>
+
+      <label for="email">Email</label>
+      <input type="email" id="email" required>
+
+      <label for="duration">Rental Length (1–10 years)</label>
+      <input type="number" id="duration" min="1" max="10" required>
+
+      <label for="payment">Choose your cryptocurrency</label>
+      <select id="payment" required>
+        <option value="xmr">Monero (XMR)</option>
+        <option value="btc">Bitcoin (BTC)</option>
+        <option value="eth">Ethereum (ETH)</option>
+      </select>
+
+      <button type="submit">Confirm Order</button>
+    </form>
+  </div>
+
+  <div class="success-message" id="success-message" style="display: none;">
+    ✅ Order submitted. Your soul is now bound to the delivery.
+  </div>
+
+  <footer>
+  </footer>
+
+  <script>
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const itemList = document.getElementById("item-list");
+    const totalEl = document.getElementById("total");
+
+    function updateCart() {
+      // Group items by ID and count quantities
+      const itemCounts = {};
+      cart.forEach(item => {
+        if (itemCounts[item.id]) {
+          itemCounts[item.id].quantity++;
+        } else {
+          itemCounts[item.id] = { ...item, quantity: 1 };
+        }
+      });
+
+      // Clear and rebuild the item list
+      itemList.innerHTML = '';
+      let total = 0;
+
+      Object.values(itemCounts).forEach(item => {
+        const li = document.createElement("li");
+        li.className = "cart-item";
+        
+        li.innerHTML = `
+          <div class="item-info">
+            <div>${item.name} (Size ${item.size})</div>
+            <div>$${item.price.toFixed(2)} each</div>
+          </div>
+          <div class="item-controls">
+            <button class="quantity-btn" onclick="decreaseQuantity(${item.id})">-</button>
+            <span class="quantity">${item.quantity}</span>
+            <button class="quantity-btn" onclick="increaseQuantity(${item.id})">+</button>
+            <button class="remove-btn" onclick="removeItem(${item.id})">Remove</button>
+          </div>
+        `;
+        
+        itemList.appendChild(li);
+        total += item.price * item.quantity;
+      });
+
+      totalEl.textContent = total.toFixed(2);
+      
+      // Update cart in localStorage
+      localStorage.setItem("cart", JSON.stringify(cart));
+    }
+
+    function increaseQuantity(itemId) {
+      const item = cart.find(item => item.id === itemId);
+      if (item) {
+        cart.push({ ...item });
+        updateCart();
+      }
+    }
+
+    function decreaseQuantity(itemId) {
+      const index = cart.findIndex(item => item.id === itemId);
+      if (index !== -1) {
+        cart.splice(index, 1);
+        updateCart();
+      }
+    }
+
+    function removeItem(itemId) {
+      cart = cart.filter(item => item.id !== itemId);
+      updateCart();
+    }
+
+    // Initialize cart display
+    updateCart();
+
+    document.getElementById("checkout-form").addEventListener("submit", function(e) {
+      e.preventDefault();
+      document.getElementById("success-message").style.display = "block";
+      localStorage.removeItem("cart");
+      cart = [];
+      updateCart();
+    });
+  </script>
+</body>
+</html>
